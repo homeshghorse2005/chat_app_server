@@ -18,12 +18,27 @@ const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
+
+//core
+
+const allowedOrigins = [
+  process.env.DEV_CLIENT_URL,
+  process.env.PROD_CLIENT_URL,
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
