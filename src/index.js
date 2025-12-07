@@ -21,23 +21,18 @@ app.use(cookieParser());
 
 //core
 
-const allowedOrigins = [
-  process.env.DEV_CLIENT_URL,
-  process.env.PROD_CLIENT_URL,
-];
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? [process.env.PROD_CLIENT_URL]
+    : [process.env.DEV_CLIENT_URL];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigins,
     credentials: true,
   })
 );
+
 
 
 app.use("/api/auth", authRoutes);
@@ -50,13 +45,6 @@ app.get("/", (req, res)=>{
 })
 
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
-}
 
 server.listen(PORT, () => {
   console.log("server is running on PORT:" + PORT);
