@@ -5,18 +5,18 @@ import express from "express";
 const app = express();
 const server = http.createServer(app);
 
-// const io = new Server(server, {
-//   cors: {
-//     origin: ["http://localhost:5173"],
-//   },
-// });
-
 const io = new Server(server, {
   cors: {
-    origin: process.env.PROD_CLIENT_URL,
-    credentials: true,
+    origin: ["https://chat-app-client-silk-gamma.vercel.app"],
   },
 });
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: process.env.PROD_CLIENT_URL,
+//     credentials: true,
+//   },
+// });
 
 
 export function getReceiverSocketId(userId) {

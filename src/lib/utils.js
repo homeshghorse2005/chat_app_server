@@ -1,11 +1,14 @@
+import jwt from "jsonwebtoken";
+
 export const generateToken = (userId, res) => {
-  const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET not defined");
+  
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
   res.cookie("jwt", token, {
     httpOnly: true,
-    secure: true,      // must be true on Vercel HTTPS
-    sameSite: "none",  // cross-domain cookie
-    path: "/",
-    maxAge: 7*24*60*60*1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    sameSite: "strict", // or "none" for cross-site
+    secure: process.env.NODE_ENV === "production", 
   });
-  return token;
 };
